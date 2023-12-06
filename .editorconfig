@@ -1,0 +1,39 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+
+[.editorconfig]
+max_line_length = 100
+
+[{*.json,*.md,*.rst}]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = true
+
+[*.py]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+
+[{*.kt,*.kts}]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+max_line_length = 180
+# Continuation indent is no longer something the Kotlin formatting recommends https://github.com/pinterest/ktlint/issues/816
+
+ktlint_code_style = intellij_idea
+
+ij_kotlin_allow_trailing_comma = true
+# https://pinterest.github.io/ktlint/0.50.0/rules/configuration-ktlint/#trailing-comma-on-call-site
+ij_kotlin_allow_trailing_comma_on_call_site = true
+ij_kotlin_name_count_to_use_star_import = 99
+ij_kotlin_name_count_to_use_star_import_for_members = 99
+ij_kotlin_packages_to_use_import_on_demand = unset # https://github.com/pinterest/ktlint/pull/1272
+# NOTE: If java.util.* is getting wildcard'd, go into Editor > Code Style > Kotlin > Imports > Package to Use Import with '*'. https://stackoverflow.com/a/51690501/5434860

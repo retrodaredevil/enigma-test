@@ -1,0 +1,31 @@
+apply plugin: 'application'
+
+
+application {
+    mainClass = "com.enigmashowdown.visual.Lwjgl3Launcher"
+    if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+        // -XstartOnFirstThread is needed for Mac OS https://github.com/EnigmaShowdown/enigmashowdown/issues/15
+        applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
+    }
+}
+
+dependencies {
+    implementation "com.github.EnigmaShowdown.enigmashowdown:visualization-lwjgl3:$enigmashowdownVersion"
+//    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+    // note: We must explicitly have all of the natives here, as for some reason, they are not uploaded to JitPack
+    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop" // we always expect the server to be running on a "desktop". Change this later if needed
+}
+
+tasks.register('dist', Jar) {
+    with jar
+    dependsOn classes
+    duplicatesStrategy DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    manifest {
+        attributes 'Main-Class': "com.enigmashowdown.visual.Lwjgl3Launcher"
+    }
+}

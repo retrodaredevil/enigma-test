@@ -1,0 +1,22 @@
+buildscript {
+    ext {
+        kotlinVersion = "1.9.21" // https://kotlinlang.org/docs/releases.html#release-details
+    }
+
+    repositories {
+        mavenCentral()
+        google()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "$kotlinVersion"
+}
+
+
+dependencies {
+
+}

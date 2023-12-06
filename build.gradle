@@ -1,0 +1,96 @@
+buildscript {
+    ext {
+//        enigmashowdownVersion = "40357c70ed33606f529e578e4aaa7938b3d827e5".substring(0, 10)
+        enigmashowdownVersion = "0.1.0"
+        gdxVersion = "1.12.1"
+
+
+        junit5Version = '5.10.1' // https://junit.org/junit5/
+        junit5PlatformVersion = '1.10.1'
+
+        kotlinVersion = "1.9.21" // https://kotlinlang.org/docs/releases.html#release-details
+    }
+
+    repositories {
+        mavenCentral()
+        google()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
+plugins {
+    // https://github.com/diffplug/spotless/tags
+    // https://github.com/diffplug/spotless/tree/main/plugin-gradle
+    // https://mvnrepository.com/artifact/com.diffplug.spotless/spotless-plugin-gradle
+    id 'com.diffplug.spotless' version '6.23.1'
+    id "org.jetbrains.kotlin.jvm" version "$kotlinVersion"
+}
+
+description = "Enigma Showdown Bot"
+group = "enigmashowdown.my.ai"
+
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        google()
+        maven { url 'https://jitpack.io' }
+    }
+
+    // https://docs.gradle.org/current/userguide/working_with_files.html#sec:reproducible_archives
+    tasks.withType(AbstractArchiveTask).configureEach {
+        preserveFileTimestamps = false
+        reproducibleFileOrder = true
+    }
+}
+
+
+spotless {
+    enforceCheck = false // doesn't have to be formatted correctly for ./gradlew build to work
+    kotlin {
+        target '**/*.kt', '**/*.kts'
+        // https://github.com/diffplug/spotless/tree/main/plugin-gradle#ktlint
+        // https://pinterest.github.io/ktlint/
+        ktlint()
+            .setEditorConfigPath("$projectDir/.editorconfig")
+            .editorConfigOverride(Map.of(
+                    "ktlint_standard_no-wildcard-imports", "disabled", // thanks https://github.com/diffplug/spotless/issues/476
+                    "ktlint_standard_discouraged-comment-location", "disabled", // this is dumb
+            ))
+    }
+}
+
+kotlin {
+    // https://kotlinlang.org/docs/gradle-configure-project.html#targeting-the-jvm
+    jvmToolchain(17)
+}
+
+
+subprojects {
+    apply plugin: 'kotlin'
+    dependencies {
+        // test dependencies
+        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit5Version
+        testImplementation "org.junit.jupiter:junit-jupiter-params:$junit5Version"
+        testImplementation "org.junit.platform:junit-platform-commons:$junit5PlatformVersion"
+        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: junit5Version
+
+        // other dependencies
+        implementation "com.github.EnigmaShowdown.enigmashowdown:client:$enigmashowdownVersion"
+    }
+    test {
+        useJUnitPlatform()
+    }
+}
+
+
+wrapper {
+    // https://gradle.org/releases/
+    // remember to run this task after updating gradleVersion!
+    gradleVersion = '8.5'
+    distributionType = Wrapper.DistributionType.ALL
+}
